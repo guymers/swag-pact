@@ -46,6 +46,6 @@ object PactResponseError {
     case MissingSchema =>
       "Could not find schema in Swagger response"
     case UnexpectedSchema(schema) =>
-      "Swagger response has schema " |+| schema.toString |+| " when it should have had none"
+      "Swagger response has schema " |+| schema.show |+| " when it should have had none"
   }
 }

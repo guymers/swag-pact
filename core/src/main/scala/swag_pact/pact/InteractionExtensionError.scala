@@ -8,8 +8,8 @@ import cats.syntax.show._
 
 sealed trait InteractionExtensionError extends Product with Serializable
 object InteractionExtensionError {
-  case class InvalidExtensionFormat(cause: Option[Throwable]) extends InteractionExtensionError
-  case class InvalidPactFormat(cause: Option[Throwable]) extends InteractionExtensionError
+  final case class InvalidExtensionFormat(cause: Option[Throwable]) extends InteractionExtensionError
+  final case class InvalidPactFormat(cause: Option[Throwable]) extends InteractionExtensionError
 
   implicit val show: Show[InteractionExtensionError] = Show.show {
     case InvalidExtensionFormat(cause) =>

@@ -52,20 +52,27 @@ object Interactions {
   ): Either[InteractionExtensionError, List[RequestResponseInteraction]] = {
 
     // need to build the full pact structure
+    val map = createPactStructure(interactions)
+
+    Try {
+      @SuppressWarnings(Array("org.wartremover.warts.Null"))
+      val notUsed = null
+      PactReader.loadV3Pact(notUsed, map)
+    } match {
+      case Success(pact: RequestResponsePact) => pact.getInteractions.asScalaList.asRight
+      case Success(p) => InvalidPactFormat(None).asLeft
+      case Failure(e) => InvalidPactFormat(Option(e)).asLeft
+    }
+  }
+
+  @SuppressWarnings(Array("org.wartremover.warts.NonUnitStatements"))
+  private def createPactStructure(interactions: List[ObjectMap]) = {
     val map = new java.util.HashMap[String, Object]()
     val provider = new java.util.HashMap[String, Object]()
     map.put("provider", provider)
     val consumer = new java.util.HashMap[String, Object]()
     map.put("consumer", consumer)
     map.put("interactions", interactions.asJava)
-
-    Try {
-      val notUsed = null
-      PactReader.loadV3Pact(notUsed, map)
-    } match {
-      case Success(pact: RequestResponsePact) => pact.getInteractions.asScalaList.asRight
-      case Success(_) => InvalidPactFormat(None).asLeft
-      case Failure(e) => InvalidPactFormat(Option(e)).asLeft
-    }
+    map
   }
 }

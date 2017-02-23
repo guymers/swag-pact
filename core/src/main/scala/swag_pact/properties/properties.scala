@@ -1,6 +1,7 @@
 package swag_pact
 package properties
 
+import cats.Show
 import io.circe.Json
 import io.swagger.models.Model
 import io.swagger.models.properties.{
@@ -115,4 +116,6 @@ object Property {
       ObjectProperty(props, None)
     }
   )
+
+  implicit val show: Show[Property] = Show.fromToString
 }

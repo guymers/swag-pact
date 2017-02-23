@@ -69,7 +69,7 @@ object Validation {
   private def validateContentTypeInList(contentTypes: List[ContentType])(contentType: ContentType): ValidatedNel[PactResponseError, ContentType] =
     contentTypes.find(_ === contentType).toValidNel(MissingContentType(contentType, contentTypes))
 
-  implicit val eq: Eq[ContentType] = new Eq[ContentType] {
+  implicit val eqContentType: Eq[ContentType] = new Eq[ContentType] {
     override def eqv(x: ContentType, y: ContentType): Boolean =
       x.getMimeType === y.getMimeType
   }

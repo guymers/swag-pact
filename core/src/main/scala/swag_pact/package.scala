@@ -1,6 +1,7 @@
 import cats.Show
 import cats.instances.string._
 import cats.syntax.semigroup._
+import cats.syntax.show._
 import org.apache.http.entity.ContentType
 
 package object swag_pact {
@@ -21,9 +22,11 @@ package object swag_pact {
   }
 
   implicit val showOptionalThrowable: Show[Option[Throwable]] = Show.show {
-    case Some(t) => ": " |+| t.getMessage
+    case Some(t) => ": " |+| t.show
     case None => ""
   }
+
+  implicit val showThrowable: Show[Throwable] = Show.fromToString
 
   implicit val showContentType: Show[ContentType] = Show.show { _.toString }
 }

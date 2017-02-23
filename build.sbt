@@ -1,7 +1,9 @@
+
 val projectName = "swag-pact"
 
 lazy val buildSettings = Seq(
   name := projectName,
+  organization := "swag-pact",
   scalaVersion := "2.11.8",
 
   scalacOptions ++= Seq(
@@ -15,16 +17,38 @@ lazy val buildSettings = Seq(
     "-Ypatmat-exhaust-depth", "off",
     "-Xfatal-warnings",
     "-Xfuture",
-    "-Xlint",
     "-Yno-adapted-args",
     "-Ywarn-dead-code",
     "-Ywarn-numeric-widen",
-    "-Ywarn-unused-import",
     "-Ywarn-value-discard"
-  )
+  ),
+  scalacOptions in Lint ++= Seq(
+    "-Xlint",
+    "-Ywarn-unused-import"
+  ),
 
-//  conflictManager := ConflictManager.strict
-)
+  wartremoverErrors := Seq.empty,
+  scalacOptions in Compile := (scalacOptions in Compile).value filterNot { _ contains "wartremover" },
+
+  conflictManager := ConflictManager.strict,
+  dependencyOverrides += "org.scala-lang.modules" %% "scala-xml" % "1.0.5"
+) ++ lintSettings
+
+// http://stackoverflow.com/a/27630768
+lazy val Lint = config("lint") extend Compile
+
+lazy val lintSettings = inConfig(Lint) {
+  Defaults.compileSettings ++ Seq(
+    sources := {
+      (sources in Lint).value ++ (sources in Compile).value
+    },
+    wartremoverErrors := Warts.allBut(
+      Wart.Any,
+      Wart.AsInstanceOf,
+      Wart.Nothing
+    )
+  )
+}
 
 val circeVersion = "0.7.0"
 val pactJvmVersion = "3.3.6"
@@ -52,7 +76,9 @@ lazy val core = project.in(file("core"))
         ExclusionRule("org.slf4j", "slf4j-api"),
         ExclusionRule("com.fasterxml.jackson.core", "jackson-annotations"),
         ExclusionRule("com.fasterxml.jackson.core", "jackson-core"),
-        ExclusionRule("com.fasterxml.jackson.core", "jackson-databind")
+        ExclusionRule("com.fasterxml.jackson.core", "jackson-databind"),
+        ExclusionRule("commons-io", "commons-io"),
+        ExclusionRule("org.apache.commons", "commons-lang3")
       )
     },
     // excluded dependencies
@@ -60,7 +86,9 @@ lazy val core = project.in(file("core"))
       "org.slf4j" % "slf4j-api" % "1.7.21",
       "com.fasterxml.jackson.core" % "jackson-annotations" % "2.8.4",
       "com.fasterxml.jackson.core" % "jackson-core" % "2.8.4",
-      "com.fasterxml.jackson.core" % "jackson-databind" % "2.8.4" exclude("com.fasterxml.jackson.core", "jackson-annotations")
+      "com.fasterxml.jackson.core" % "jackson-databind" % "2.8.4" exclude("com.fasterxml.jackson.core", "jackson-annotations"),
+      "commons-io" % "commons-io" % "2.5",
+      "org.apache.commons" % "commons-lang3" % "3.4"
     )
   )
 
@@ -70,8 +98,26 @@ lazy val scalatest = project.in(file("scalatest"))
   .settings(moduleName := s"$projectName-scalatest")
   .settings(
     libraryDependencies ++= Seq(
-      "au.com.dius" %% "pact-jvm-provider" % pactJvmVersion,
+      "au.com.dius" %% "pact-jvm-provider" % pactJvmVersion exclude("org.scalatest", "scalatest_2.11"),
 
-      "org.scalatest" %% "scalatest" % scalaTestVersion
+      "org.scalatest" %% "scalatest" % scalaTestVersion,
+
+      "com.github.tomakehurst" % "wiremock" % "2.5.1" % "test"
+    ).map {
+      _.excludeAll(
+        ExclusionRule("org.slf4j", "slf4j-api"),
+        ExclusionRule("com.fasterxml.jackson.core", "jackson-annotations"),
+        ExclusionRule("com.fasterxml.jackson.core", "jackson-core"),
+        ExclusionRule("com.fasterxml.jackson.core", "jackson-databind"),
+        ExclusionRule("org.apache.httpcomponents", "httpclient")
+      )
+    },
+    // excluded dependencies
+    libraryDependencies ++= Seq(
+      "org.slf4j" % "slf4j-api" % "1.7.21",
+      "com.fasterxml.jackson.core" % "jackson-annotations" % "2.8.4" % "test",
+      "com.fasterxml.jackson.core" % "jackson-core" % "2.8.4" % "test",
+      "com.fasterxml.jackson.core" % "jackson-databind" % "2.8.4" % "test" exclude("com.fasterxml.jackson.core", "jackson-annotations"),
+      "org.apache.httpcomponents" % "httpclient" % "4.5.2" % "test"
     )
   )

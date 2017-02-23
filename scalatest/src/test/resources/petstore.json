@@ -23,18 +23,6 @@
         "description": "Find out more",
         "url": "http://swagger.io"
       }
-    },
-    {
-      "name": "store",
-      "description": "Access to Petstore orders"
-    },
-    {
-      "name": "user",
-      "description": "Operations about user",
-      "externalDocs": {
-        "description": "Find out more about our store",
-        "url": "http://swagger.io"
-      }
     }
   ],
   "schemes": [
@@ -173,10 +161,10 @@
         "x-pact-interactions": [
           {
             "description": "return a pet",
-            "provider_state": "there is a pet with id 666689",
+            "provider_state": "there is a pet with id 1",
             "request": {
               "method": "get",
-              "path": "/pet/666689",
+              "path": "/pet/1",
               "headers": {
                 "Accept": "application/json"
               }
@@ -187,7 +175,7 @@
                 "Content-Type": "application/json"
               },
               "body": {
-                "id": 666689,
+                "id": 1,
                 "category": {
                   "id": 0,
                   "name": "string"
@@ -208,10 +196,10 @@
           },
           {
             "description": "return nothing",
-            "provider_state": "there is a not pet with id -1000",
+            "provider_state": "there is a not pet with id 2",
             "request": {
               "method": "get",
-              "path": "/pet/-1000",
+              "path": "/pet/2",
               "headers": {
                 "Accept": "application/json"
               }

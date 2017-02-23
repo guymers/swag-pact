@@ -4,6 +4,7 @@ package properties
 import cats.Show
 import cats.instances.string._
 import cats.syntax.semigroup._
+import cats.syntax.show._
 
 object Compare {
   import CompareError._
@@ -84,10 +85,11 @@ object CompareError {
 
   implicit val show: Show[CompareError] = Show.show {
     case TypeMismatch(path, expected, actual) =>
-      ComparePath.pathToString(path) |+| ": expected " |+| expected.toString |+| ": actual " |+| actual.toString
+      ComparePath.pathToString(path) |+| ": expected " |+| expected.show |+| ": actual " |+| actual.show
     case MissingObjectKey(path, key) =>
       ComparePath.pathToString(path) |+| ": missing key " |+| key
     case ExtraObjectKey(path, key) =>
       ComparePath.pathToString(path) |+| ": extra key " |+| key
   }
+
 }
