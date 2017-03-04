@@ -4,25 +4,23 @@ package properties
 import cats.Show
 import io.circe.Json
 import io.swagger.models.Model
-import io.swagger.models.properties.{
-  ArrayProperty => SwaggerArrayProperty,
-  BaseIntegerProperty => SwaggerBaseIntegerProperty,
-  BooleanProperty => SwaggerBooleanProperty,
-  DateProperty => SwaggerDateProperty,
-  DateTimeProperty => SwaggerDateTimeProperty,
-  DecimalProperty => SwaggerDecimalProperty,
-  DoubleProperty => SwaggerDoubleProperty,
-  EmailProperty => SwaggerEmailProperty,
-  FloatProperty => SwaggerFloatProperty,
-  IntegerProperty => SwaggerIntegerProperty,
-  LongProperty => SwaggerLongProperty,
-  ObjectProperty => SwaggerObjectProperty,
-  PasswordProperty => SwaggerPasswordProperty,
-  Property => SwaggerProperty,
-  RefProperty => SwaggerRefProperty,
-  StringProperty => SwaggerStringProperty,
-  UUIDProperty => SwaggerUUIDProperty
-}
+import io.swagger.models.properties.{ArrayProperty => SwaggerArrayProperty}
+import io.swagger.models.properties.{BaseIntegerProperty => SwaggerBaseIntegerProperty}
+import io.swagger.models.properties.{BooleanProperty => SwaggerBooleanProperty}
+import io.swagger.models.properties.{DateProperty => SwaggerDateProperty}
+import io.swagger.models.properties.{DateTimeProperty => SwaggerDateTimeProperty}
+import io.swagger.models.properties.{DecimalProperty => SwaggerDecimalProperty}
+import io.swagger.models.properties.{DoubleProperty => SwaggerDoubleProperty}
+import io.swagger.models.properties.{EmailProperty => SwaggerEmailProperty}
+import io.swagger.models.properties.{FloatProperty => SwaggerFloatProperty}
+import io.swagger.models.properties.{IntegerProperty => SwaggerIntegerProperty}
+import io.swagger.models.properties.{LongProperty => SwaggerLongProperty}
+import io.swagger.models.properties.{ObjectProperty => SwaggerObjectProperty}
+import io.swagger.models.properties.{PasswordProperty => SwaggerPasswordProperty}
+import io.swagger.models.properties.{Property => SwaggerProperty}
+import io.swagger.models.properties.{RefProperty => SwaggerRefProperty}
+import io.swagger.models.properties.{StringProperty => SwaggerStringProperty}
+import io.swagger.models.properties.{UUIDProperty => SwaggerUUIDProperty}
 
 sealed trait Property extends Product with Serializable {
   def required: Option[Boolean]
@@ -52,7 +50,8 @@ object Property {
     prop match {
       case refProp: SwaggerRefProperty =>
         val model = definitions.get(refProp.getSimpleRef)
-        val properties = model.map(_.getProperties.asScalaMap).getOrElse(Map.empty[String, SwaggerProperty])
+        val properties =
+          model.map(_.getProperties.asScalaMap).getOrElse(Map.empty[String, SwaggerProperty])
         fromSwaggerObject(prop, definitions, properties)
 
       case objectProp: SwaggerObjectProperty =>
@@ -90,8 +89,9 @@ object Property {
     definitions: Map[String, Model],
     properties: Map[String, SwaggerProperty]
   ): ObjectProperty = {
-    val props = properties.foldLeft(Map.empty[String, Property]) { case (map, (name, property)) =>
-      map + (name -> fromSwagger(definitions, property))
+    val props = properties.foldLeft(Map.empty[String, Property]) {
+      case (map, (name, property)) =>
+        map + (name -> fromSwagger(definitions, property))
     }
     ObjectProperty(props, Option(prop.getRequired))
   }
@@ -110,8 +110,9 @@ object Property {
       ArrayProperty(itemProp, None)
     },
     jsonObject = obj => {
-      val props = obj.toList.foldLeft(Map.empty[String, Property]) { case (map, (key, value)) =>
-        map + (key -> fromJson(value))
+      val props = obj.toList.foldLeft(Map.empty[String, Property]) {
+        case (map, (key, value)) =>
+          map + (key -> fromJson(value))
       }
       ObjectProperty(props, None)
     }

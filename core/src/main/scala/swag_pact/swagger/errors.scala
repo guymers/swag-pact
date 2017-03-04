@@ -11,7 +11,8 @@ import swag_pact.pact.InteractionExtensionError
 sealed trait SwaggerError extends Product with Serializable
 object SwaggerError {
   final case class MissingFile(filename: String) extends SwaggerError
-  final case class OperationErrors(httpMethod: HttpMethod, errors: NonEmptyList[SwaggerOperationError]) extends SwaggerError
+  final case class OperationErrors(httpMethod: HttpMethod, errors: NonEmptyList[SwaggerOperationError])
+    extends SwaggerError
 
   implicit val show: Show[SwaggerError] = Show.show {
     case MissingFile(filename) =>

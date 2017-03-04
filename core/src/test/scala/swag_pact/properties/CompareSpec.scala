@@ -2,7 +2,8 @@ package swag_pact
 package properties
 
 import org.scalatest.compatible.Assertion
-import org.scalatest.{EitherValues, FunSpec}
+import org.scalatest.EitherValues
+import org.scalatest.FunSpec
 import swag_pact.properties.CompareError.TypeMismatch
 
 class CompareSpec extends FunSpec with EitherValues {
@@ -46,7 +47,6 @@ class CompareSpec extends FunSpec with EitherValues {
       noErrors(DoubleProperty(None), IntProperty(None))
     }
 
-
     it("float to double") {
       noErrors(FloatProperty(None), DoubleProperty(None))
     }
@@ -60,7 +60,6 @@ class CompareSpec extends FunSpec with EitherValues {
       noErrors(FloatProperty(None), IntProperty(None))
     }
 
-
     it("long to double") {
       noErrors(LongProperty(None), DoubleProperty(None))
     }
@@ -73,7 +72,6 @@ class CompareSpec extends FunSpec with EitherValues {
     it("long to int") {
       noErrors(LongProperty(None), IntProperty(None))
     }
-
 
     it("int to double") {
       noErrors(IntProperty(None), DoubleProperty(None))
@@ -91,10 +89,7 @@ class CompareSpec extends FunSpec with EitherValues {
 
   describe("Compare arrays") {
     it("Array[String] to Array[String]") {
-      noErrors(
-        ArrayProperty(StringProperty(None), None),
-        ArrayProperty(StringProperty(None), None)
-      )
+      noErrors(ArrayProperty(StringProperty(None), None), ArrayProperty(StringProperty(None), None))
     }
   }
 

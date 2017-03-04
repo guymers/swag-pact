@@ -12,7 +12,7 @@ import scala.concurrent.Future
 
 class SwagPactProviderSpecTest extends SwagPactProviderSpec with BeforeAndAfterAll {
 
-  var wireMockServer: WireMockServer= _
+  var wireMockServer: WireMockServer = _
 
   override def beforeAll(): Unit = {
     wireMockServer = createMockServer()
@@ -24,42 +24,43 @@ class SwagPactProviderSpecTest extends SwagPactProviderSpec with BeforeAndAfterA
   }
 
   override def swaggerFile: String = "petstore.json"
-  override def url(state: Option[String]): (Future[String], Option[Unit => Unit]) = (
-    Future.successful(s"http://localhost:${wireMockServer.port()}"),
-    None
-  )
+  override def url(state: Option[String]): (Future[String], Option[Unit => Unit]) =
+    (Future.successful(s"http://localhost:${wireMockServer.port()}"), None)
 
   verify()
-
 
   private def createMockServer() = {
     val wireMockServer = new WireMockServer(WireMockConfiguration.options().dynamicPort())
 
     val internalMutationA = wireMockServer.stubFor {
-      WireMock.get(WireMock.urlEqualTo("/pet/1"))
+      WireMock
+        .get(WireMock.urlEqualTo("/pet/1"))
         .willReturn {
-          WireMock.aResponse()
+          WireMock
+            .aResponse()
             .withStatus(200)
             .withHeader("Content-Type", "application/json")
             .withBody(
-              Json.obj(
-                "id" -> 1.asJson,
-                "category" -> Json.obj("id" -> 0.asJson, "name" -> "string".asJson),
-                "name" -> "doggie".asJson,
-                "photoUrls" -> Json.arr("string".asJson),
-                "tags" -> Json.arr(
-                  Json.obj("id" -> 0.asJson, "name" -> "string".asJson)
-                ),
-                "status" -> "available".asJson
-              ).noSpaces
+              Json
+                .obj(
+                  "id" -> 1.asJson,
+                  "category" -> Json.obj("id" -> 0.asJson, "name" -> "string".asJson),
+                  "name" -> "doggie".asJson,
+                  "photoUrls" -> Json.arr("string".asJson),
+                  "tags" -> Json.arr(Json.obj("id" -> 0.asJson, "name" -> "string".asJson)),
+                  "status" -> "available".asJson
+                )
+                .noSpaces
             )
         }
     }
 
     val internalMutationB = wireMockServer.stubFor {
-      WireMock.get(WireMock.urlEqualTo("/pet/2"))
+      WireMock
+        .get(WireMock.urlEqualTo("/pet/2"))
         .willReturn {
-          WireMock.aResponse()
+          WireMock
+            .aResponse()
             .withStatus(404)
         }
     }

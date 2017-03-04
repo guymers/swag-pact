@@ -1,13 +1,17 @@
 package swag_pact
 package pact
 
-import au.com.dius.pact.model.{PactReader, RequestResponseInteraction, RequestResponsePact}
+import au.com.dius.pact.model.PactReader
+import au.com.dius.pact.model.RequestResponseInteraction
+import au.com.dius.pact.model.RequestResponsePact
 import cats.syntax.either._
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ObjectNode
 
 import scala.collection.JavaConverters._
-import scala.util.{Failure, Success, Try}
+import scala.util.Failure
+import scala.util.Success
+import scala.util.Try
 
 object Interactions {
   import InteractionExtensionError._
@@ -21,14 +25,15 @@ object Interactions {
   def findInteractions(
     vendorExtensions: => ObjectMap
   ): Either[InteractionExtensionError, List[RequestResponseInteraction]] = {
-    vendorExtensions.asScalaMap.get(extensionKey).map { interactionExtensions =>
-      findPactInteractions(interactionExtensions).flatMap(parsePactInteractions)
-    }.getOrElse(List.empty[RequestResponseInteraction].asRight[InteractionExtensionError])
+    vendorExtensions.asScalaMap
+      .get(extensionKey)
+      .map { interactionExtensions =>
+        findPactInteractions(interactionExtensions).flatMap(parsePactInteractions)
+      }
+      .getOrElse(List.empty[RequestResponseInteraction].asRight[InteractionExtensionError])
   }
 
-  private def findPactInteractions(
-    interactionExtensions: Object
-  ): Either[InteractionExtensionError, List[ObjectMap]] = {
+  private def findPactInteractions(interactionExtensions: Object): Either[InteractionExtensionError, List[ObjectMap]] = {
 
     interactionExtensions match {
       case ls: java.util.List[_] if ls.size() > 0 =>
@@ -60,7 +65,8 @@ object Interactions {
       val notUsed = null
       PactReader.loadV3Pact(notUsed, map)
     } match {
-      case Success(pact: RequestResponsePact) => pact.getInteractions.asScalaList.asRight[InteractionExtensionError]
+      case Success(pact: RequestResponsePact) =>
+        pact.getInteractions.asScalaList.asRight[InteractionExtensionError]
       case Success(_) => InvalidRequestResponsePactFormat.asLeft[List[RequestResponseInteraction]]
       case Failure(e) => InvalidPactFormat(e).asLeft[List[RequestResponseInteraction]]
     }

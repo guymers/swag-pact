@@ -2,7 +2,8 @@ package swag_pact.properties
 
 import io.swagger.models.Model
 import io.swagger.models.properties.{StringProperty => SwaggerStringProperty}
-import org.scalatest.{EitherValues, FunSpec}
+import org.scalatest.EitherValues
+import org.scalatest.FunSpec
 
 class PropertiesSwaggerSpec extends FunSpec with EitherValues {
 

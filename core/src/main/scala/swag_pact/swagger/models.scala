@@ -25,13 +25,7 @@ sealed trait SwaggerResponse extends Product with Serializable {
   def headers: Map[String, Property]
   def body: Option[Property]
 }
-final case class DefaultSwaggerResponse(
-  headers: Map[String, Property],
-  body: Option[Property]
-) extends SwaggerResponse
+final case class DefaultSwaggerResponse(headers: Map[String, Property], body: Option[Property]) extends SwaggerResponse
 
-final case class StatusSwaggerResponse(
-  statusCode: Int,
-  headers: Map[String, Property],
-  body: Option[Property]
-) extends SwaggerResponse
+final case class StatusSwaggerResponse(statusCode: Int, headers: Map[String, Property], body: Option[Property])
+  extends SwaggerResponse

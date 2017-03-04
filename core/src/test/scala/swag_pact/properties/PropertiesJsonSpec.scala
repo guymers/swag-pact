@@ -2,7 +2,8 @@ package swag_pact
 package properties
 
 import io.circe.Json
-import org.scalatest.{EitherValues, FunSpec}
+import org.scalatest.EitherValues
+import org.scalatest.FunSpec
 
 class PropertiesJsonSpec extends FunSpec with EitherValues {
 
@@ -76,16 +77,13 @@ class PropertiesJsonSpec extends FunSpec with EitherValues {
 
     describe("object") {
       it("should convert to a object property") {
-        val json = Json.obj(
-          "key_a" -> Json.fromString("value_a"),
-          "key_b" -> Json.fromString("value_b")
-        )
+        val json =
+          Json.obj("key_a" -> Json.fromString("value_a"), "key_b" -> Json.fromString("value_b"))
         val property = Property.fromJson(json)
 
-        assert(property === ObjectProperty(Map(
-          "key_a" -> StringProperty(None),
-          "key_b" -> StringProperty(None)
-        ), None))
+        assert(
+          property === ObjectProperty(Map("key_a" -> StringProperty(None), "key_b" -> StringProperty(None)), None)
+        )
       }
     }
   }

@@ -12,7 +12,8 @@ sealed abstract class PactResponseError extends Product with Serializable
 object PactResponseError {
   final case class MissingSwaggerResponse(statusCode: Int, availableStatusCodes: List[Int]) extends PactResponseError
   final case class InvalidContentType(contentType: String) extends PactResponseError
-  final case class MissingContentType(contentType: ContentType, availableContentTypes: List[ContentType]) extends PactResponseError
+  final case class MissingContentType(contentType: ContentType, availableContentTypes: List[ContentType])
+    extends PactResponseError
 
   case object MissingBody extends PactResponseError
   final case class UnexpectedBody(body: String) extends PactResponseError
@@ -28,11 +29,14 @@ object PactResponseError {
 
   implicit val show: Show[PactResponseError] = Show.show {
     case MissingSwaggerResponse(statusCode, availableStatusCodes) =>
-      "No Swagger response with status code " |+| statusCode.toString |+| " available status codes: " |+| availableStatusCodes.mkString(", ")
+      "No Swagger response with status code " |+| statusCode.toString |+| " available status codes: " |+| availableStatusCodes
+        .mkString(", ")
     case InvalidContentType(contentType) =>
       "Invalid content type " |+| contentType
     case MissingContentType(contentType, availableContentTypes) =>
-      "No content type " |+| contentType.show |+| " in Swagger response available status codes: " |+| availableContentTypes.map(_.show).mkString(", ")
+      "No content type " |+| contentType.show |+| " in Swagger response available status codes: " |+| availableContentTypes
+        .map(_.show)
+        .mkString(", ")
 
     case MissingBody =>
       "Swagger response has body but Pact does not"

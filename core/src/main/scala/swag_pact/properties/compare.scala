@@ -13,19 +13,26 @@ object Compare {
   def compare(expected: Property, actual: Property): List[CompareError] = {
 
     //    @tailrec
-    def go(expected: Property, actual: Property, errs: List[CompareError], path: List[ComparePath]): List[CompareError] = {
+    def go(
+      expected: Property,
+      actual: Property,
+      errs: List[CompareError],
+      path: List[ComparePath]
+    ): List[CompareError] = {
       (expected, actual) match {
         case (ObjectProperty(expectedProps, _), ObjectProperty(actualProps, _)) =>
-          val eee = expectedProps.toList.foldLeft(errs) { case (e, (key, prop)) =>
-            val actualProp = actualProps.get(key)
-            actualProp match {
-              case None => MissingObjectKey(path, key) :: e
-              case Some(ap) => go(prop, ap, e, ObjectPath(key) :: path)
-            }
+          val eee = expectedProps.toList.foldLeft(errs) {
+            case (e, (key, prop)) =>
+              val actualProp = actualProps.get(key)
+              actualProp match {
+                case None => MissingObjectKey(path, key) :: e
+                case Some(ap) => go(prop, ap, e, ObjectPath(key) :: path)
+              }
           }
 
-          actualProps.keySet.diff(expectedProps.keySet).foldLeft(eee) { case (e, key) =>
-            ExtraObjectKey(path, key) :: e
+          actualProps.keySet.diff(expectedProps.keySet).foldLeft(eee) {
+            case (e, key) =>
+              ExtraObjectKey(path, key) :: e
           }
 
         case (ArrayProperty(expectedArrayProp, _), ArrayProperty(actualArrayProp, _)) =>

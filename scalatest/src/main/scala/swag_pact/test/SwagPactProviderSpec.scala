@@ -1,18 +1,23 @@
 package swag_pact
 package test
 
-import au.com.dius.pact.model.{FullResponseMatch, RequestResponseInteraction, ResponseMatching}
+import au.com.dius.pact.model.FullResponseMatch
+import au.com.dius.pact.model.RequestResponseInteraction
+import au.com.dius.pact.model.ResponseMatching
 import au.com.dius.pact.provider.sbtsupport.HttpClient
-import cats.data.Validated.{Invalid, Valid}
+import cats.data.Validated.Invalid
+import cats.data.Validated.Valid
 import org.scalatest.AsyncWordSpec
-import swag_pact.swagger.{Swagger, SwaggerOperation}
+import swag_pact.swagger.Swagger
+import swag_pact.swagger.SwaggerOperation
 import swag_pact.validation.Validation
 import cats.syntax.semigroup._
 import cats.syntax.show._
 import cats.instances.string._
 import org.scalatest.compatible.Assertion
 
-import scala.concurrent.{Future, Promise}
+import scala.concurrent.Future
+import scala.concurrent.Promise
 
 trait SwagPactProviderSpec extends AsyncWordSpec {
 
@@ -37,14 +42,16 @@ trait SwagPactProviderSpec extends AsyncWordSpec {
       case Valid(s) =>
         s.title when {
 
-          s.operations.foreach { case (urlPart, methods) =>
-            methods.foreach { case (method, operation) =>
-              if (operation.interactions.nonEmpty) {
-                "a " |+| method.name() |+| " request to " |+| urlPart.part should {
-                  operation.interactions.foreach(runInteraction(operation))
-                }
+          s.operations.foreach {
+            case (urlPart, methods) =>
+              methods.foreach {
+                case (method, operation) =>
+                  if (operation.interactions.nonEmpty) {
+                    "a " |+| method.name() |+| " request to " |+| urlPart.part should {
+                      operation.interactions.foreach(runInteraction(operation))
+                    }
+                  }
               }
-            }
           }
         }
     }
@@ -75,7 +82,9 @@ trait SwagPactProviderSpec extends AsyncWordSpec {
               assert(responseMatch === FullResponseMatch)
             }
             .onComplete { t =>
-              onComplete.foreach { func => func(()) }
+              onComplete.foreach { func =>
+                func(())
+              }
               p.complete(t)
             }
           p.future
