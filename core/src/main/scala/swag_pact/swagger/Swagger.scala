@@ -4,8 +4,10 @@ package swagger
 import au.com.dius.pact.model.RequestResponseInteraction
 import cats.data.{NonEmptyList, ValidatedNel}
 import cats.instances.list._
+import cats.instances.string._
 import cats.syntax.cartesian._
 import cats.syntax.either._
+import cats.syntax.eq._
 import cats.syntax.option._
 import cats.syntax.traverse._
 import io.swagger.models.properties.{Property => SwaggerProperty}
@@ -25,7 +27,7 @@ final case class Swagger(
 
 object Swagger {
 
-  val defaultResponseKey = "default"
+  private val defaultResponseKey = "default"
 
   def parse(file: String): ValidatedNel[SwaggerError, Swagger] = {
     Option(new SwaggerParser().read(file)).toValidNel(SwaggerError.MissingFile(file))
@@ -98,7 +100,7 @@ object Swagger {
     val rawResponses = responses.asScalaMap
 
     val convertedResponses = rawResponses
-      .filter { case (status, _) => status != defaultResponseKey }
+      .filter { case (status, _) => status =!= defaultResponseKey }
       .toList
       .traverseU { case (status, response) =>
         val statusCode = Try { status.toInt }.toOption.toValidNel(SwaggerOperationError.InvalidStatusCode(status))

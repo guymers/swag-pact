@@ -11,13 +11,13 @@ package object swag_pact {
 
   final implicit class JavaMapExtensions[K, V](map: => java.util.Map[K, V]) {
     def asScalaMap: Map[K, V] = {
-      Option(map).map(_.asScala.toMap).getOrElse(Map.empty)
+      Option(map).map(_.asScala.toMap).getOrElse(Map.empty[K, V])
     }
   }
 
   final implicit class JavaListExtensions[E](list: => java.util.List[E]) {
     def asScalaList: List[E] = {
-      Option(list).map(_.asScala.toList).getOrElse(List.empty)
+      Option(list).map(_.asScala.toList).getOrElse(List.empty[E])
     }
   }
 

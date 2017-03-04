@@ -1,4 +1,3 @@
-
 val projectName = "swag-pact"
 
 lazy val buildSettings = Seq(
@@ -42,14 +41,11 @@ lazy val lintSettings = inConfig(Lint) {
     sources := {
       (sources in Lint).value ++ (sources in Compile).value
     },
-    wartremoverErrors := Warts.allBut(
-      Wart.Any,
-      Wart.AsInstanceOf,
-      Wart.Nothing
-    )
+    wartremoverErrors := Warts.allBut()
   )
 }
 
+val catsVersion = "0.9.0"
 val circeVersion = "0.7.0"
 val pactJvmVersion = "3.3.6"
 val scalaTestVersion = "3.0.1"
@@ -66,6 +62,8 @@ lazy val core = project.in(file("core"))
       "io.swagger" % "swagger-parser" % "1.0.25",
       "au.com.dius" % "pact-jvm-model" % pactJvmVersion,
       "org.apache.httpcomponents" % "httpcore" % "4.4.4",
+
+      "org.typelevel" %% "cats-core" % catsVersion,
 
       "io.circe" %% "circe-core" % circeVersion,
       "io.circe" %% "circe-parser" % circeVersion,

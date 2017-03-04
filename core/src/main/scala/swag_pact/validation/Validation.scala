@@ -33,16 +33,20 @@ object Validation {
         response.getHeaders.asScalaMap.get(HttpHeaders.CONTENT_TYPE) match {
           case None =>
             val validateBodyNotPresentMissing =
-              if (rawBody.isPresent) unexpectedBody(rawBody.getValue).invalidNel
-              else List.empty[CompareError].validNel
+              if (rawBody.isPresent) unexpectedBody(rawBody.getValue).invalidNel[List[CompareError]]
+              else List.empty[CompareError].validNel[PactResponseError]
+
             val validateNoSchema = swaggerResponse.body match {
-              case None => List.empty[CompareError].validNel
-              case Some(schema) => unexpectedSchema(schema).invalidNel
+              case None => List.empty[CompareError].validNel[PactResponseError]
+              case Some(schema) => unexpectedSchema(schema).invalidNel[List[CompareError]]
             }
+
             validateBodyNotPresentMissing.map2(validateNoSchema)(_ ++ _)
 
           case Some(rawContentType) =>
-            val validateBodyPreset = if (!rawBody.isPresent) missingBody.invalidNel else rawBody.getValue.validNel
+            val validateBodyPreset =
+              if (!rawBody.isPresent) missingBody.invalidNel[String]
+              else rawBody.getValue.validNel[PactResponseError]
 
             validateValidContentType(rawContentType)
               .andThen(validateContentTypeInList(operation.produces))
@@ -51,12 +55,12 @@ object Validation {
                 if (contentType.getMimeType === ContentType.APPLICATION_JSON.getMimeType) {
                   val json = io.circe.parser.parse(body)
                   json.toValidated.bimap(e => NonEmptyList.of(InvalidBody(contentType, e.some)), Property.fromJson)
-                } else UnsupportedContentType(contentType).invalidNel
+                } else UnsupportedContentType(contentType).invalidNel[Property]
               }
               .andThen { property =>
                 swaggerResponse.body match {
-                  case None => MissingSchema.invalidNel
-                  case Some(schema) => Compare.compare(schema, property).validNel
+                  case None => MissingSchema.invalidNel[List[CompareError]]
+                  case Some(schema) => Compare.compare(schema, property).validNel[PactResponseError]
                 }
               }
         }

@@ -52,7 +52,7 @@ object Property {
     prop match {
       case refProp: SwaggerRefProperty =>
         val model = definitions.get(refProp.getSimpleRef)
-        val properties = model.map(_.getProperties.asScalaMap).getOrElse(Map.empty)
+        val properties = model.map(_.getProperties.asScalaMap).getOrElse(Map.empty[String, SwaggerProperty])
         fromSwaggerObject(prop, definitions, properties)
 
       case objectProp: SwaggerObjectProperty =>
