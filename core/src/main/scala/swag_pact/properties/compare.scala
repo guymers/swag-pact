@@ -6,13 +6,14 @@ import cats.instances.string._
 import cats.syntax.semigroup._
 import cats.syntax.show._
 
+import scala.annotation.tailrec
+
 object Compare {
   import CompareError._
   import ComparePath._
 
   def compare(expected: Property, actual: Property): List[CompareError] = {
 
-    //    @tailrec
     def go(
       expected: Property,
       actual: Property,
@@ -73,12 +74,18 @@ object ComparePath {
   case object ArrayPath extends ComparePath
   final case class ObjectPath(key: String) extends ComparePath
 
-  def pathToString(path: List[ComparePath]): String = path match {
-    case Nil => ""
-    case ArrayPath :: Nil => "[]"
-    case ObjectPath(key) :: Nil => key
-    case ArrayPath :: ps => "[]" |+| pathToString(ps)
-    case ObjectPath(key) :: ps => "." |+| key |+| pathToString(ps)
+  def pathToString(path: List[ComparePath]): String = {
+    @tailrec
+    def go(path: List[ComparePath], acc: String): String = path match {
+      case Nil => acc
+      case ArrayPath :: remaining =>
+        val newAcc = acc |+| "[]"
+        go(remaining, newAcc)
+      case ObjectPath(key) :: remaining =>
+        val newAcc = acc |+| (if (acc.isEmpty) "" else ".") |+| key
+        go(remaining, newAcc)
+    }
+    go(path, "")
   }
 }
 

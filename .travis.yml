@@ -9,6 +9,10 @@ jdk:
 
 script:
   - scripts/ci.sh
+  - sbt clean coverage test coverageReport
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
 
 # copied from https://github.com/typelevel/cats/blob/master/.travis.yml
 cache:

@@ -5,6 +5,8 @@ import org.scalatest.compatible.Assertion
 import org.scalatest.EitherValues
 import org.scalatest.FunSpec
 import swag_pact.properties.CompareError.TypeMismatch
+import swag_pact.properties.ComparePath.ArrayPath
+import swag_pact.properties.ComparePath.ObjectPath
 
 class CompareSpec extends FunSpec with EitherValues {
 
@@ -90,6 +92,27 @@ class CompareSpec extends FunSpec with EitherValues {
   describe("Compare arrays") {
     it("Array[String] to Array[String]") {
       noErrors(ArrayProperty(StringProperty(None), None), ArrayProperty(StringProperty(None), None))
+    }
+
+    it("Array[String] to Array[Int]") {
+      val expected = StringProperty(None)
+      val actual = IntProperty(None)
+      val errors = Compare.compare(ArrayProperty(expected, None), ArrayProperty(actual, None))
+      assert(errors === List(TypeMismatch(List(ArrayPath), expected, actual)))
+    }
+  }
+
+  describe("Compare objects") {
+    it("Object[String] to Object[String]") {
+      val props = Map("str" -> StringProperty(None))
+      noErrors(ObjectProperty(props, None), ObjectProperty(props, None))
+    }
+
+    it("Object[String] to Object[Int]") {
+      val expectedProps = Map("str" -> StringProperty(None))
+      val actualProps = Map("str" -> IntProperty(None))
+      val errors = Compare.compare(ObjectProperty(expectedProps, None), ObjectProperty(actualProps, None))
+      assert(errors === List(TypeMismatch(List(ObjectPath("str")), StringProperty(None), IntProperty(None))))
     }
   }
 
