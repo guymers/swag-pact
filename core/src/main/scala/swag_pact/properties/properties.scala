@@ -1,6 +1,10 @@
 package swag_pact
 package properties
 
+import java.time.LocalDate
+import java.time.ZonedDateTime
+import java.util.UUID
+
 import cats.Show
 import io.circe.Json
 import io.swagger.models.Model
@@ -21,6 +25,8 @@ import io.swagger.models.properties.{Property => SwaggerProperty}
 import io.swagger.models.properties.{RefProperty => SwaggerRefProperty}
 import io.swagger.models.properties.{StringProperty => SwaggerStringProperty}
 import io.swagger.models.properties.{UUIDProperty => SwaggerUUIDProperty}
+
+import scala.util.Try
 
 sealed trait Property extends Product with Serializable {
   def required: Option[Boolean]
@@ -104,7 +110,12 @@ object Property {
         num.toLong.map(_ => LongProperty(None)) getOrElse
         DoubleProperty(None)
     },
-    jsonString = _ => StringProperty(None),
+    jsonString = str => {
+      if (looksLikeDate(str)) DateProperty(None)
+      else if (looksLikeDateTime(str)) DateTimeProperty(None)
+      else if (looksLikeUUID(str)) UUIDProperty(None)
+      else StringProperty(None)
+    },
     jsonArray = arr => {
       val itemProp = arr.headOption.map(fromJson).getOrElse(UnknownProperty(None))
       ArrayProperty(itemProp, None)
@@ -117,6 +128,18 @@ object Property {
       ObjectProperty(props, None)
     }
   )
+
+  private def looksLikeDate(str: String): Boolean = {
+    Try { LocalDate.parse(str) }.toOption.isDefined
+  }
+
+  private def looksLikeDateTime(str: String): Boolean = {
+    Try { ZonedDateTime.parse(str) }.toOption.isDefined
+  }
+
+  private def looksLikeUUID(str: String): Boolean = {
+    Try { UUID.fromString(str) }.toOption.isDefined
+  }
 
   implicit val show: Show[Property] = Show.fromToString
 }

@@ -22,16 +22,47 @@ class CompareSpec extends FunSpec with EitherValues {
     }
 
     it("boolean to string") {
-      val expected = BooleanProperty(None)
-      val actual = StringProperty(None)
-      val errors = Compare.compare(expected, actual)
-      assert(errors === List(TypeMismatch(Nil, expected, actual)))
+      typeMismatch(BooleanProperty(None), StringProperty(None))
     }
   }
 
   describe("Compare strings") {
     it("string to string") {
       noErrors(StringProperty(None), StringProperty(None))
+    }
+
+    it("string to date") {
+      noErrors(StringProperty(None), DateProperty(None))
+    }
+
+    it("string to datetime") {
+      noErrors(StringProperty(None), DateTimeProperty(None))
+    }
+
+    it("string to uuid") {
+      noErrors(StringProperty(None), UUIDProperty(None))
+    }
+  }
+
+  describe("Compare dates") {
+    it("date to date") {
+      noErrors(DateProperty(None), DateProperty(None))
+    }
+
+    it("date to string") {
+      typeMismatch(DateProperty(None), StringProperty(None))
+    }
+  }
+
+  describe("Compare date times") {
+    it("datetime to datetime") {
+      noErrors(DateTimeProperty(None), DateTimeProperty(None))
+    }
+  }
+
+  describe("Compare uuids") {
+    it("uuid to uuid") {
+      noErrors(UUIDProperty(None), UUIDProperty(None))
     }
   }
 
@@ -119,5 +150,10 @@ class CompareSpec extends FunSpec with EitherValues {
   private def noErrors(expected: Property, actual: Property): Assertion = {
     val errors = Compare.compare(expected, actual)
     assert(errors.isEmpty)
+  }
+
+  private def typeMismatch(expected: Property, actual: Property): Assertion = {
+    val errors = Compare.compare(expected, actual)
+    assert(errors === List(TypeMismatch(Nil, expected, actual)))
   }
 }

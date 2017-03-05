@@ -59,6 +59,15 @@ object Compare {
         case (BooleanProperty(_), BooleanProperty(_)) => errs
 
         case (StringProperty(_), StringProperty(_)) => errs
+        case (StringProperty(_), DateProperty(_)) => errs
+        case (StringProperty(_), DateTimeProperty(_)) => errs
+        case (StringProperty(_), UUIDProperty(_)) => errs
+
+        case (DateProperty(_), DateProperty(_)) => errs
+
+        case (DateTimeProperty(_), DateTimeProperty(_)) => errs
+
+        case (UUIDProperty(_), UUIDProperty(_)) => errs
 
         case (UnknownProperty(_), UnknownProperty(_)) => errs
 

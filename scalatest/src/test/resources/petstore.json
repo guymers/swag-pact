@@ -175,12 +175,14 @@
                 "Content-Type": "application/json"
               },
               "body": {
-                "id": 1,
+                "id": "debbc598-ca32-4603-b3d5-cc734e7cad81",
                 "category": {
                   "id": 0,
                   "name": "string"
                 },
                 "name": "doggie",
+                "dateOfBirth": "2017-01-01",
+                "lastModified": "2017-01-01T01:02:03Z",
                 "photoUrls": [
                   "string"
                 ],
@@ -363,8 +365,8 @@
       ],
       "properties": {
         "id": {
-          "type": "integer",
-          "format": "int64"
+          "type": "string",
+          "format": "uuid"
         },
         "category": {
           "$ref": "#/definitions/Category"
@@ -372,6 +374,14 @@
         "name": {
           "type": "string",
           "example": "doggie"
+        },
+        "dateOfBirth": {
+          "type": "string",
+          "format": "date"
+        },
+        "lastModified": {
+          "type": "string",
+          "format": "date-time"
         },
         "photoUrls": {
           "type": "array",

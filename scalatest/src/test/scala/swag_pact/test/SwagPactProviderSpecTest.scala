@@ -43,9 +43,11 @@ class SwagPactProviderSpecTest extends SwagPactProviderSpec with BeforeAndAfterA
             .withBody(
               Json
                 .obj(
-                  "id" -> 1.asJson,
+                  "id" -> "debbc598-ca32-4603-b3d5-cc734e7cad81".asJson,
                   "category" -> Json.obj("id" -> 0.asJson, "name" -> "string".asJson),
                   "name" -> "doggie".asJson,
+                  "dateOfBirth" -> "2017-01-01".asJson,
+                  "lastModified" -> "2017-01-01T01:02:03Z".asJson,
                   "photoUrls" -> Json.arr("string".asJson),
                   "tags" -> Json.arr(Json.obj("id" -> 0.asJson, "name" -> "string".asJson)),
                   "status" -> "available".asJson

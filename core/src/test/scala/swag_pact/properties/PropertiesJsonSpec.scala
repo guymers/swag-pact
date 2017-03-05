@@ -1,7 +1,10 @@
 package swag_pact
 package properties
 
+import java.util.UUID
+
 import io.circe.Json
+import io.circe.syntax._
 import org.scalatest.EitherValues
 import org.scalatest.FunSpec
 
@@ -56,6 +59,27 @@ class PropertiesJsonSpec extends FunSpec with EitherValues {
         val property = Property.fromJson(json)
 
         assert(property === StringProperty(None))
+      }
+
+      it("should convert a date string to a date property") {
+        val json = Json.fromString("2017-01-01")
+        val property = Property.fromJson(json)
+
+        assert(property === DateProperty(None))
+      }
+
+      it("should convert a date time string to a date property") {
+        val json = Json.fromString("2017-01-01T01:02:03Z")
+        val property = Property.fromJson(json)
+
+        assert(property === DateTimeProperty(None))
+      }
+
+      it("should convert a uuid string to a uuid property") {
+        val json = UUID.randomUUID().asJson
+        val property = Property.fromJson(json)
+
+        assert(property === UUIDProperty(None))
       }
     }
 
